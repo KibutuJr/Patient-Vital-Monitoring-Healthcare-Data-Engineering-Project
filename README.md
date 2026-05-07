@@ -1,541 +1,589 @@
-# Patient Vital Monitoring Pipeline using Google Cloud Platform (GCP)
+# Patient Vital Monitoring Data Engineering Project on Google Cloud Platform (GCP)
 
-## Overview
-
-This project implements a **real-time healthcare data pipeline** using Google Cloud Platform. It simulates patient vital signs, streams them through a distributed messaging system, processes them in real-time, stores them in a data warehouse, and visualizes insights through dashboards.
-
-This is not just an implementation — it is a **full data engineering workflow**, demonstrating how modern streaming systems are designed, built, and operated in production environments.
+## Real-Time Healthcare Streaming Pipeline using Pub/Sub, Dataflow, BigQuery & Looker Studio
 
 ---
 
-# Core Objective
+## Project Overview
 
-The goal of this project is to:
+This project demonstrates how to build a complete **real-time healthcare data engineering pipeline** on Google Cloud Platform (GCP). The system simulates patient vital signs data such as:
 
-- Build a **scalable streaming data pipeline**
-- Apply **Medallion Architecture (Bronze → Silver → Gold)**
-- Understand **event-driven systems**
-- Learn **cloud-native data engineering patterns**
+- Heart Rate
+- Blood Pressure
+- Oxygen Saturation (SpO2)
+- Body Temperature
+- Respiratory Rate
+
+The streaming data is processed in real time using modern cloud-native data engineering tools and visualized through interactive dashboards.
 
 ---
 
-# System Architecture
+# Table of Contents
+
+1. Project Goal
+2. Business Problem
+3. Architecture Overview
+4. Technologies Used
+5. Project Workflow
+6. Step-by-Step Implementation
+7. Why Each GCP Service Was Used
+8. Data Pipeline Flow
+9. Data Cleaning & Transformation
+10. Real-Time Streaming
+11. BigQuery Data Warehouse
+12. Dashboard & Analytics
+13. Screenshots
+14. Key Learnings
+15. Challenges Faced
+16. Future Improvements
+17. Conclusion
+18. Author
+
+---
+
+# 1. Project Goal
+
+The goal of this project is to simulate a real-world healthcare monitoring system capable of:
+
+- Receiving patient vitals continuously
+- Processing streaming healthcare data in real time
+- Cleaning and transforming raw medical records
+- Storing structured healthcare data in BigQuery
+- Visualizing patient insights using dashboards
+- Demonstrating a production-style data engineering workflow on GCP
+
+This project teaches how modern healthcare systems process live patient information for:
+
+- Real-time monitoring
+- Medical analytics
+- Emergency detection
+- Hospital reporting systems
+- Data-driven healthcare decisions
+
+---
+
+# 2. Business Problem
+
+Healthcare systems generate massive amounts of patient monitoring data every second.
+
+Traditional batch systems cannot efficiently handle:
+
+- Continuous sensor streams
+- Live monitoring
+- Emergency alerts
+- Real-time analytics
+
+Hospitals need systems capable of:
+
+- Ingesting streaming patient data
+- Processing records instantly
+- Detecting abnormal readings quickly
+- Storing data reliably
+- Visualizing patient trends in real time
+
+This project solves that challenge using GCP streaming technologies.
+
+---
+
+# 3. Architecture Overview
+
+The pipeline follows this real-time streaming architecture:
+
+```text
+Patient Data Simulator
+        ↓
+Google Cloud Pub/Sub
+        ↓
+Google Cloud Dataflow
+        ↓
+BigQuery
+        ↓
+Looker Studio Dashboard
+```
+
+---
+
+# Architecture Diagram
 
 ![Architecture](images/architecture.png)
 
 ---
 
-# End-to-End Flow
+# 4. Technologies Used
 
-```text
-Data Simulator → Pub/Sub → Dataflow (Apache Beam) → BigQuery → Dashboard
-```
-
----
-
-# Step-by-Step Breakdown (What, Why, Importance)
-
----
-
-# 1. Enabling GCP Services
-
-## What is Created?
-
-You enable APIs:
-- Dataflow API
-- Pub/Sub API
-- BigQuery API
-- Cloud Storage API
-
-## Why This is Done
-
-GCP services are not active by default. Enabling APIs allows your project to:
-- Provision resources
-- Execute jobs
-- Communicate between services
-
-## Why It’s Important
-
-Without enabling services:
-- Dataflow jobs won’t run
-- Pub/Sub won’t accept messages
-- BigQuery won’t store data
-
-This is the **foundation layer** of your infrastructure.
+| Technology | Purpose |
+|---|---|
+| Python | Data simulation |
+| Google Cloud Pub/Sub | Real-time message ingestion |
+| Google Cloud Dataflow | Stream processing |
+| Apache Beam | Data transformation framework |
+| BigQuery | Data warehouse |
+| Google Cloud Storage | Pipeline staging/temp storage |
+| Power BI | Dashboard visualization |
+| Git & GitHub | Version control |
 
 ---
 
-# 2. Cloud Storage Bucket
+# 5. Project Workflow
 
-## What is Created?
+The project workflow consists of the following stages:
 
-A **GCS bucket**, for example:
+## Step 1 — Simulate Patient Data
 
-```bash
-gs://patient-vital-streaming-bucket1
-```
+A Python script generates synthetic patient vital records continuously.
 
-With:
-- `/staging` folder
-- `/temp` folder
+## Step 2 — Stream Data into Pub/Sub
+
+The generated records are streamed into a Pub/Sub topic.
+
+## Step 3 — Process Data using Dataflow
+
+Dataflow consumes streaming messages from Pub/Sub and applies transformations.
+
+## Step 4 — Store Processed Data in BigQuery
+
+Cleaned records are written into BigQuery tables for analytics.
+
+## Step 5 — Visualize in Dashboard
+
+Power BI connects to BigQuery and displays healthcare analytics dashboards.
 
 ---
 
-## Cloud Storage
+# 6. Step-by-Step Implementation
+
+---
+
+# Step 1 — Creating Google Cloud Storage Bucket
+
+Cloud Storage buckets were created for:
+
+- Dataflow temporary files
+- Staging files
+- Pipeline artifacts
+
+## Why Cloud Storage is Important
+
+Dataflow requires temporary and staging locations during execution.
+
+Without Cloud Storage:
+
+- Dataflow jobs cannot run properly
+- Intermediate processing files cannot be stored
+- Templates and logs cannot be managed
+
+---
+
+## Bucket Creation Screenshot
+
+![Bucket Creation](images/bucked_creation.png)
+
+---
+
+## Cloud Storage Screenshot
 
 ![Cloud Storage](images/cloudstorage.png)
 
 ---
 
-## Why This is Created
+# Step 2 — Creating Pub/Sub Topic
 
-Dataflow requires storage for:
-- Staging pipeline code
-- Temporary processing files
-- Shuffle operations
+A Pub/Sub topic was created to receive streaming patient data.
 
----
+## Why Pub/Sub is Important
 
-## Why It’s Important
+Pub/Sub acts as the ingestion layer.
 
-Think of Cloud Storage as:
-> The **working memory** of your pipeline
+It enables:
 
-Without it:
-- Dataflow jobs will fail at runtime
-- Intermediate data cannot be processed
+- Real-time messaging
+- Event-driven architecture
+- Decoupled systems
+- High scalability
+- Fault tolerance
 
----
-
-# 3. Pub/Sub Topic
-
-## What is Created?
-
-A **Pub/Sub Topic**:
-
-```bash
-patient_vitals_topic
-```
+Healthcare devices continuously send events into Pub/Sub.
 
 ---
 
-## Topic Created
+## Topic Creation Screenshot
 
-![Topic](images/topic_created.png)
-
----
-
-## Why This is Created
-
-A topic is a **message ingestion endpoint**.
-
-It receives streaming data from producers (your simulator).
+![Topic Created](images/topic_created.png)
 
 ---
 
-## Why It’s Important
+# Step 3 — Creating Pub/Sub Subscription
 
-Pub/Sub enables:
-- **Decoupling** (producers and consumers don’t depend on each other)
-- **Scalability** (millions of events per second)
-- **Reliability** (message durability)
+A subscription was attached to the topic.
 
-This is the **entry point of your data pipeline**.
+## Why Subscription is Important
 
----
+Subscriptions allow consumers (Dataflow) to read messages from Pub/Sub.
 
-# 4. Pub/Sub Subscription
+Without subscriptions:
 
-## What is Created?
-
-A **subscription**:
-
-```bash
-patient_vitals_subscription
-```
+- Messages cannot be consumed
+- Stream processing cannot begin
 
 ---
 
-## Subscription Created
+## Subscription Screenshot
 
-![Subscription](images/subscription_created.png)
-
----
-
-## Why This is Created
-
-A subscription allows a service (Dataflow) to:
-- **Read messages from a topic**
+![Subscription Created](images/subscription_created.png)
 
 ---
 
-## Why It’s Important
+# Step 4 — Simulating Healthcare Data
 
-Without a subscription:
-- Messages exist but cannot be consumed
+Python scripts generated synthetic patient data.
 
-Think of it as:
-> A **data stream tap** connected to your topic
+Generated fields include:
 
----
-
-# 5. Data Simulator
-
-## What is Created?
-
-A Python script that generates:
-
-- Heart rate
-- Oxygen level
-- Temperature
-- Timestamp
 - Patient ID
+- Heart Rate
+- Oxygen Level
+- Temperature
+- Blood Pressure
+- Timestamp
+
+## Why Data Simulation is Important
+
+Real hospital datasets are usually:
+
+- Sensitive
+- Protected by HIPAA/GDPR
+- Difficult to access
+
+Simulation enables safe development and testing.
 
 ---
 
-## Simulated Data
+## Simulated Data Screenshot
 
-![Simulated Data](images/data_simulated.png)
-
----
-
-## Why This is Created
-
-Real-world systems rely on:
-- IoT devices
-- Medical sensors
-
-Since you don’t have real devices, you simulate data.
+![Data Simulated](images/data_simulated.png)
 
 ---
 
-## Why It’s Important
+# Step 5 — Data Cleaning
 
-This allows you to:
-- Test real-time pipelines
-- Mimic production systems
-- Validate streaming behavior
+The pipeline performs transformations and cleaning.
 
----
+## Cleaning Activities
 
-# 6. Apache Beam Pipeline
+- Remove invalid records
+- Convert datatypes
+- Handle null values
+- Normalize columns
+- Format timestamps
 
-## What is Created?
+## Why Data Cleaning is Important
 
-A streaming pipeline using:
+Raw streaming data is often messy.
 
-- `ReadFromPubSub`
-- Transformations
-- Cleaning logic
-- BigQuery sink
+Bad healthcare data can lead to:
 
----
+- Incorrect analytics
+- Wrong medical decisions
+- Dashboard inaccuracies
 
-## Why This is Created
-
-Apache Beam defines:
-- **Data processing logic**
-- Independent of execution engine
+Data cleaning ensures reliability.
 
 ---
 
-## Why It’s Important
-
-Beam provides:
-- Portability (can run on multiple runners)
-- Abstraction over distributed processing
-- Unified batch + streaming model
-
-This is the **core logic layer** of your system.
-
----
-
-# 7. Data Cleaning Layer
-
-## What is Created?
-
-A transformation stage that:
-- Removes invalid records
-- Handles missing values
-- Standardizes formats
-
----
-
-## Data Cleaning
+## Data Cleaning Screenshot
 
 ![Data Cleaning](images/data_cleaning.png)
 
 ---
 
-## Why This is Created
+# Step 6 — Running Dataflow Pipeline
 
-Raw streaming data is:
-- Noisy
-- Inconsistent
-- Sometimes corrupt
+Apache Beam pipelines were deployed on Google Cloud Dataflow.
 
----
+## Why Dataflow is Important
 
-## Why It’s Important
+Dataflow provides:
 
-Garbage in → Garbage out.
+- Real-time stream processing
+- Auto scaling
+- Fault tolerance
+- Distributed processing
+- Serverless execution
 
-Cleaning ensures:
-- Accurate analytics
-- Reliable dashboards
-- Trustworthy insights
+It is ideal for healthcare streaming pipelines.
 
 ---
 
-# 8. Dataflow Job
-
-## What is Created?
-
-A **managed streaming job** on GCP Dataflow.
-
----
-
-## Dataflow Job
+## Dataflow Pipeline Screenshot
 
 ![Dataflow](images/dataflow.png)
 
 ---
 
-## Dataflow Running
+## Dataflow Working Screenshot
 
 ![Dataflow Working](images/dataflow_working.png)
 
 ---
 
-## Why This is Created
+## Working Dataflow Screenshot
 
-Dataflow executes your Beam pipeline:
-- Distributes computation
-- Handles scaling automatically
-- Manages fault tolerance
+![Working Dataflow](images/working_dataflow.png)
 
 ---
 
-## Why It’s Important
+# Step 7 — BigQuery Data Warehouse
 
-This is where:
-> Your pipeline becomes **production-grade**
+Processed records are stored in BigQuery.
 
-You get:
-- Auto-scaling
-- Parallel processing
-- High availability
+## Why BigQuery is Important
 
----
+BigQuery enables:
 
-# 9. BigQuery Tables
+- Large-scale analytics
+- SQL querying
+- Real-time reporting
+- Fast aggregations
+- Dashboard integration
 
-## What is Created?
-
-Three logical layers:
-
-- **Bronze Table** → Raw data  
-- **Silver Table** → Cleaned data  
-- **Gold Table** → Aggregated insights  
+Healthcare organizations require centralized analytics storage.
 
 ---
 
-## BigQuery Tables
-
-![BigQuery Tables](images/bigquerry_table.png)
-
----
-
-## BigQuery Data
+## BigQuery Dataset Screenshot
 
 ![BigQuery Data](images/bigquerry_data.png)
 
 ---
 
-## Why This is Created
+## BigQuery Table Screenshot
 
-BigQuery acts as:
-- A **data warehouse**
-- A **query engine**
+![BigQuery Table](images/bigquerry_table.png)
 
 ---
 
-## Why It’s Important
+# 8. Data Pipeline Flow
 
-It enables:
-- SQL analytics
-- Fast queries on large datasets
-- Integration with dashboards
+## Full Streaming Flow
 
-This is your **analytics layer**.
+### Data Generation
+Python continuously generates patient vital records.
+
+↓
+
+### Message Streaming
+Records are published into Pub/Sub topics.
+
+↓
+
+### Stream Processing
+Dataflow consumes Pub/Sub messages.
+
+↓
+
+### Transformation
+Apache Beam applies cleaning and formatting.
+
+↓
+
+### Storage
+Processed records are inserted into BigQuery.
+
+↓
+
+### Visualization
+Power BI displays healthcare insights.
 
 ---
 
-# 10. Dashboard
+# 9. Real-Time Streaming Importance
 
-## What is Created?
+Real-time healthcare systems are critical because they allow:
 
-A visualization layer showing:
-- Patient trends
-- Average vitals
-- Anomalies
+- Immediate anomaly detection
+- Faster patient response
+- Live monitoring
+- Continuous analytics
+- Emergency alerting
+
+Streaming pipelines reduce delays in medical systems.
 
 ---
 
-## Dashboard
+# 10. Dashboard & Analytics
+
+Power BI dashboards were created from BigQuery tables.
+
+The dashboard visualizes:
+
+- Average heart rate
+- Oxygen saturation trends
+- Temperature monitoring
+- Patient distributions
+- Time-series analytics
+
+---
+
+## Dashboard Screenshot
 
 ![Dashboard](images/dashboard.png)
 
 ---
 
-## Why This is Created
+# 11. Why This Architecture Matters
 
-Raw data is not useful to stakeholders.
+This architecture demonstrates modern cloud-native engineering principles.
 
-Dashboards:
-- Translate data into insights
-- Enable decision-making
+## Benefits
 
----
+### Scalability
+Can process millions of records.
 
-## Why It’s Important
+### Reliability
+Managed GCP services reduce operational overhead.
 
-This is where:
-> Data becomes **actionable intelligence**
+### Real-Time Analytics
+Enables instant healthcare insights.
 
----
+### Fault Tolerance
+Services recover automatically from failures.
 
-# Medallion Architecture (Deep Explanation)
-
-## Bronze Layer
-
-- Raw ingestion
-- No transformation
-
-**Why:**
-- Data lineage
-- Replay capability
+### Serverless Processing
+No infrastructure management required.
 
 ---
 
-## Silver Layer
+# 12. Important Concepts Learned
 
-- Cleaned + validated
+This project teaches:
 
-**Why:**
-- Reliable datasets
-- Standardization
-
----
-
-## Gold Layer
-
-- Aggregated + business-ready
-
-**Why:**
-- Reporting
-- Decision-making
-
----
-
-# IAM Permissions (Critical Concept)
-
-## What is Configured?
-
-Roles assigned:
-
-- `roles/dataflow.worker`
-- `roles/pubsub.subscriber`
-- `roles/storage.objectAdmin`
-
----
-
-## Why This is Done
-
-GCP uses **Identity and Access Management (IAM)**.
-
-Services cannot act unless:
-- Permissions are explicitly granted
-
----
-
-## Why It’s Important
-
-Without IAM:
-- Dataflow cannot read Pub/Sub
-- Cannot write to BigQuery
-- Cannot access storage
-
-This enforces:
-> **Security + controlled access**
-
----
-
-# Environment Variables (.env)
-
-## What is Created?
-
-A `.env` file storing:
-
-```env
-GCP_PROJECT=utility-time-495316-v4
-REGION=us-central1
-```
-
----
-
-## Why This is Created
-
-To:
-- Avoid hardcoding values
-- Improve portability
-- Simplify configuration
-
----
-
-## Why It’s Important
-
-Supports:
-- Clean code
-- Easy deployment across environments
-
----
-
-# Key Engineering Concepts Learned
-
-- Event-driven architecture
+- Real-time data engineering
+- Event-driven systems
 - Stream processing
-- Distributed systems
-- Data pipeline design
-- Cloud-native services
+- Apache Beam pipelines
+- Cloud-native architectures
 - Data warehousing
-- Real-time analytics
+- Analytics engineering
+- Dashboard reporting
 
 ---
 
-# Final Outcome
+# 13. Key GCP Services Explained
 
-This system successfully delivers:
+| Service | Purpose | Why Important |
+|---|---|---|
+| Pub/Sub | Messaging system | Enables streaming ingestion |
+| Dataflow | Stream processing | Processes data in real time |
+| BigQuery | Analytics warehouse | Stores healthcare analytics |
+| Cloud Storage | Temp/staging storage | Supports Dataflow jobs |
+| Power BI| Visualization | Displays dashboards |
 
-- Real-time ingestion
-- Stream processing
-- Data transformation
-- Analytics-ready storage
-- Visual insights
+---
+
+# 14. Challenges Faced
+
+## Streaming Pipeline Setup
+
+Configuring streaming jobs correctly requires:
+
+- Pub/Sub configuration
+- Proper IAM permissions
+- Correct pipeline arguments
+
+## Data Consistency
+
+Ensuring clean and properly formatted records was essential.
+
+## Real-Time Processing
+
+Maintaining continuous streaming required debugging pipeline failures and monitoring jobs carefully.
+
+---
+
+# 15. Future Improvements
+
+Possible enhancements include:
+
+- Adding anomaly detection using ML
+- Integrating wearable IoT devices
+- Implementing alert systems
+- Creating hospital notifications
+- Adding patient risk scoring
+- Deploying CI/CD pipelines
+- Containerizing applications with Docker
+- Using Terraform for infrastructure automation
+
+---
+
+# 16. Real-World Applications
+
+This architecture can be adapted for:
+
+- Hospital monitoring systems
+- ICU monitoring
+- Smart healthcare systems
+- Wearable fitness tracking
+- Emergency response analytics
+- Telemedicine platforms
+
+---
+
+# 17. Conclusion
+
+This project demonstrates how to build a modern real-time healthcare data pipeline using Google Cloud Platform.
+
+The solution combines:
+
+- Streaming ingestion
+- Real-time processing
+- Cloud-native architecture
+- Analytics engineering
+- Dashboard visualization
+
+By leveraging Pub/Sub, Dataflow, BigQuery, and Power BI, healthcare data can be processed efficiently and analyzed in real time.
+
+This project provides hands-on experience with production-grade data engineering concepts widely used in modern cloud environments.
+
+---
+
+# 18. Project Screenshots
+
+| Screenshot | Description |
+|---|---|
+| architecture.png | System architecture |
+| bucked_creation.png | Cloud Storage bucket creation |
+| cloudstorage.png | Cloud Storage overview |
+| topic_created.png | Pub/Sub topic creation |
+| subscription_created.png | Pub/Sub subscription |
+| data_simulated.png | Simulated healthcare data |
+| data_cleaning.png | Data transformation |
+| dataflow.png | Dataflow pipeline |
+| dataflow_working.png | Active Dataflow job |
+| working_dataflow.png | Streaming pipeline execution |
+| bigquerry_data.png | BigQuery dataset |
+| bigquerry_table.png | BigQuery table |
+| dashboard.png | Analytics dashboard |
 
 ---
 
 # Author
 
-Fred Kibutu  
-GitHub: [KibutuJr](https://github.com/KibutuJr)  
-Portfolio: [Your Portfolio](https://kibutujr.vercel.app/)   
-LinkedIn: [Your LinkedIn](https://www.linkedin.com/in/fred-kibutu/) 
+## Fred Kibutu
 
----
+GitHub: [KibutuJr](https://github.com/KibutuJr)
+
+LinkedIn: [Fred Kibutu](https://www.linkedin.com/in/fred-kibutu/)
+
+Portfolio : [KibutuJR](https://kibutujr.vercel.app/)
 
 ---
 
 # License
 
 MIT License
+
+---
+
+Portfolio: [Fred Kibutu Portfolio](https://fredkibutu.dev)
+
+---

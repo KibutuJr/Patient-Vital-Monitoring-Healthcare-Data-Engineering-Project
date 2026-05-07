@@ -41,6 +41,13 @@ The streaming data is processed in real time using modern cloud-native data engi
 
 ---
 
+This project implementation is inspired by and extends concepts from the following detailed guide:
+
+**🔗 Source Article:**  
+[Building a Real-Time Patient Vital Monitoring Pipeline on Google Cloud – End-to-End Guide](https://medium.com/@codegnerdev/building-a-real-time-patient-vital-monitoring-pipeline-on-google-cloud-end-to-end-guide-eff82260b019)
+
+---
+
 # 1. Project Goal
 
 The goal of this project is to simulate a real-world healthcare monitoring system capable of:

@@ -98,7 +98,7 @@ Google Cloud Dataflow
         ↓
 BigQuery
         ↓
-Looker Studio Dashboard
+Power BI Dashboard
 ```
 
 ---
@@ -176,7 +176,7 @@ Without Cloud Storage:
 
 ## Bucket Creation Screenshot
 
-![Bucket Creation](images/bucked_creation.png)
+![Bucket Creation](images/bucket_creation.png)
 
 ---
 
@@ -584,6 +584,5 @@ MIT License
 
 ---
 
-Portfolio: [Fred Kibutu Portfolio](https://fredkibutu.dev)
 
 ---

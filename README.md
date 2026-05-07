@@ -528,9 +528,11 @@ This system successfully delivers:
 # Author
 
 Fred Kibutu  
-GitHub: https://github.com/KibutuJr
-Portfolio: 
-LinkedIn: 
+GitHub: [KibutuJr](https://github.com/KibutuJr)  
+Portfolio: [Your Portfolio](https://kibutujr.vercel.app/)   
+LinkedIn: [Your LinkedIn](https://www.linkedin.com/in/fred-kibutu/) 
+
+---
 
 ---
 

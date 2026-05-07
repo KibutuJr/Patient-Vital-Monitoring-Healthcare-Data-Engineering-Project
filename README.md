@@ -1,6 +1,6 @@
 # Patient Vital Monitoring Data Engineering Project on Google Cloud Platform (GCP)
 
-## Real-Time Healthcare Streaming Pipeline using Pub/Sub, Dataflow, BigQuery & Looker Studio
+## Real-Time Healthcare Streaming Pipeline using Pub/Sub, Dataflow, BigQuery & Power BI.
 
 ---
 
